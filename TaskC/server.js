@@ -1,7 +1,9 @@
+require('dotenv').config({ path: '.env.local' })
 const express = require('express')
 const cors = require('cors')
 const { supabase } = require('./lib/supabase')
 const { validateInterviewTest } = require('./lib/validation')
+
 
 const app = express()
 const PORT = process.env.PORT || 3001

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gemini Chat</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        #prompt { width: 100%; padding: 10px; margin: 10px 0; }
+        #submit { padding: 10px 20px; }
+        #response { margin: 20px 0; padding: 15px; border: 1px solid #ddd; min-height: 50px; }
+        .loading { color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <h1>Gemini Chat</h1>
+    <input type="text" id="prompt" placeholder="Enter your prompt">
+    <button id="submit">Ask Gemini</button>
+    <div id="response"></div>
+
+    <script>
+        const promptInput = document.getElementById('prompt');
+        const submitBtn = document.getElementById('submit');
+        const responseDiv = document.getElementById('response');
+
+        submitBtn.onclick = async () => {
+            const prompt = promptInput.value.trim();
+            if (!prompt) return;
+
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Loading...';
+            responseDiv.innerHTML = '<div class="loading">Thinking...</div>';
+
+            try {
+                const response = await fetch('/ask-gemini', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': 'hi'
+                    },
+                    body: JSON.stringify({ prompt })
+                });
+
+                const data = await response.json();
+                responseDiv.innerHTML = response.ok ? data.response : `Error: ${data.error}`;
+            } catch (error) {
+                responseDiv.innerHTML = `Error: ${error.message}`;
+            } finally {
+                // Reset button state
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Ask Gemini';
+            }
+        };
+
+        promptInput.onkeypress = (e) => {
+            if (e.key === 'Enter') submitBtn.click();
+        };
+    </script>
+</body>
+</html>
